@@ -16,8 +16,7 @@ deploy:
   secret_access_key:
     secure: jeVYQ02OTywaENrIcWvoZg+YzGnhiluCDes/kaJE4NeVIZqjlipFt5yXxCct9S5w
   bucket: openbci-gui
-  folder:
-    - ${APPVEYOR_REPO_BRANCH}/${APPVEYOR_REPO_COMMIT_TIMESTAMP}-${APPVEYOR_REPO_COMMIT}
+  folder: ${APPVEYOR_REPO_BRANCH}/${APPVEYOR_REPO_COMMIT_TIMESTAMP}-${APPVEYOR_REPO_COMMIT}
 
 environment:
   PFX_PASS:
