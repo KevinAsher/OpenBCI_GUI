@@ -20,9 +20,7 @@ class W_Emotion extends Widget {
 
 
 
-    float paddingRadius;  
-    double[] modelFeatures;
-    ModelClassifier modelClf;
+    float paddingRadius;
     int prediction;
     int lastUpdate = 0;
 
@@ -43,14 +41,6 @@ class W_Emotion extends Widget {
         widgetTemplateButton = new Button (x + w/2, y + h/2, 200, navHeight, "Design Your Own Widget!", 12);
         widgetTemplateButton.setFont(p4, 14);
         widgetTemplateButton.setURL("https://openbci.github.io/Documentation/docs/06Software/01-OpenBCISoftware/GUIWidgets#custom-widget");
-        println("Emotion widget configured");
-
-
-        try {
-            modelClf = new ModelClassifier("C:\\Users\\Kevin\\Documents\\Processing\\OpenBCI_GUI\\OpenBCI_GUI\\data.json");
-        } catch (FileNotFoundException e) {
-            println("Model data file does not exist.");
-        }
 
         /* Connect to the local machine at port 5204
         *  (or whichever port you choose to run the
@@ -60,6 +50,8 @@ class W_Emotion extends Widget {
         */
         // Runtime.getRuntime().exec("python C:\\Users\\Kevin\\Desktop\\facul\\tcc-code\\openbci\\mini_server.py");
         myClient = new Client(ourApplet, "127.0.0.1", 5204); 
+
+        println("Emotion widget configured");
     }
 
     // TODO: add resilience to connections.
@@ -85,74 +77,19 @@ class W_Emotion extends Widget {
             widgetTemplateButton.setIgnoreHover(false);
         }
 
-        // Prediction:
-        // int nFreqBands = 5;
-        // int nChannels = 6;
-        // double[] features = new double[nChannels*nFreqBands]; 
-        
-        // // flatten dataProcessing.avgPowerInBins
-        // int Nfft = getNfftSafe();
         
 
-
-        // final int[] processing_band_low_Hz = {
-        //     1, 4, 8, 13, 30
-        // }; //lower bound for each frequency band of interest (2D classifier only)
-        // final int[] processing_band_high_Hz = {
-        //     4, 8, 13, 30, 55
-        // };  //upper bound for each frequency band of interest
-        // float avgPowerInBins[][] = new float[nChannels][processing_band_low_Hz.length];
-
-        // for (int Ichan = 0; Ichan < nChannels; Ichan++) {
-        //     for (int i = 0; i < processing_band_low_Hz.length; i++) {
-        //         float sum = 0;
-        //         // int binNum = 0;
-        //         for (int Ibin = 0; Ibin <= Nfft/2; Ibin ++) { // loop over FFT bins
-        //             float FFT_freq_Hz = fftBuff[Ichan].indexToFreq(Ibin);   // center frequency of this bin
-        //             float psdx = 0;
-        //             // if the frequency matches a band
-        //             if (FFT_freq_Hz >= processing_band_low_Hz[i] && FFT_freq_Hz < processing_band_high_Hz[i]) {
-                        
-        //                 psdx = fftBuff[Ichan].getBand(Ibin) * fftBuff[Ichan].getBand(Ibin);
-                        
-        //                 sum += psdx;
-        //                 // binNum ++;
-        //             }
-        //         }
-        //         avgPowerInBins[Ichan][i] = sum;   // total power in a band
-        //         // println(i, binNum, sum);
-        //     }
-        // }
-
-
-        // for(int channel = 0; channel < nChannels; channel++) {
-        //     for (int band = 0; band < nFreqBands; band++) {
-                
-        //         features[channel*nFreqBands+band] = avgPowerInBins[channel][band];
-        //     }
-            
-        // }
-
-        // printArray(features);
-        // prediction = modelClf.predict(features);
-        // print(prediction, ", ");
         paddingRadius = max(w*0.05, h*0.05);
-        // println("fft value: " + fftBuff[0].getBand(0));
 
-        // float alphaBandIndexLimits = [fftBuff[0].freqToIndex()]
-
-        // Although the variable name is avgPowerInBins, it actually represents the PSD power and NOT the average power 
-        // as the variable's name suggests.
         
-
-        // myClient.write(string.yLittleBuff_uV[0][0]));
         if(isRunning) {
             myClient.write(new org.json.JSONArray(yLittleBuff_uV).toString());
         }
 
         if (myClient.available() > 0) { 
             JSONObject json = parseJSONObject(myClient.readString());
-            println(json.getString("message")); 
+            println(json.getInt("message")); 
+            prediction = json.getInt("message");
         }
     }
 
@@ -185,23 +122,23 @@ class W_Emotion extends Widget {
         //----------------- draw Circle -----------------
 
         fill(#000000);
-        noStroke();
-        ellipse(w/4, h/2, w/4, w/4);
+        // noStroke();
+        // ellipse(w/4, h/2, w/4, w/4);
 
-        noStroke();
+        // noStroke();
         // draw focus label
-        text("focused!", w/4, h/2 + w/8 + 16);
+        // text("focused!", w/4, h/2 + w/8 + 16);
         
-        text("Confidence: " + nf(84.123112, 1, 3), w/4, h/2 + w/8 + 32);
+        // text("Confidence: " + nf(84.123112, 1, 3), w/4, h/2 + w/8 + 32);
 
         // text("fft value: " + nf(fftBuff[0].getBand(10), 1, 3), w/4, h/2 + w/8 + 48);
 
-        text("Prediction: " + prediction, w/4, h/2 + w/8 + 48);
+        // text("Prediction: " + prediction, w/4, h/2 + w/8 + 48);
+        text("Prediction: " + prediction, w/2, h/2);
 
 
         translate(-x, -y);
         textAlign(LEFT, BASELINE);
-        widgetTemplateButton.draw();
         popStyle();
 
     }
