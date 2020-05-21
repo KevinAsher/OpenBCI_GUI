@@ -30,6 +30,7 @@ W_MarkerMode w_markermode;
 W_playback w_playback;
 W_SSVEP w_ssvep;
 W_Spectrogram w_spectrogram;
+W_Emotion w_emotion;
 
 //ADD YOUR WIDGET TO WIDGETS OF WIDGETMANAGER
 void setupWidgets(PApplet _this, ArrayList<Widget> w){
@@ -103,6 +104,10 @@ void setupWidgets(PApplet _this, ArrayList<Widget> w){
     w_spectrogram = new W_Spectrogram(_this);
     w_spectrogram.setTitle("Spectrogram");
     addWidget(w_spectrogram, w);
+
+    w_emotion = new W_Emotion(_this);
+    w_emotion.setTitle("Emotion");
+    addWidget(w_emotion, w);
 
     //only instantiate these widgets if you are using a Cyton board for live streaming
     if(eegDataSource == DATASOURCE_CYTON){

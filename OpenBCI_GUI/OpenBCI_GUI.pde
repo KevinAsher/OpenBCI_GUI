@@ -42,6 +42,8 @@ import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import processing.data.JSONObject;
+import processing.data.JSONArray;
 // import java.net.InetAddress; // Used for ping, however not working right now.
 import java.util.Random;
 import java.awt.Robot; //used for simulating mouse clicks
@@ -56,6 +58,7 @@ import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
+
 
 //------------------------------------------------------------------------
 //                       Global Variables & Instances
