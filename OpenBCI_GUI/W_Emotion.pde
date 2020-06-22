@@ -22,7 +22,11 @@ class W_Emotion extends Widget {
 
     float paddingRadius;
     int prediction;
+    String predictedLabel = "";
+    color predictedLabelColor = #000000;
+
     int lastUpdate = 0;
+    String startText = "Prediction: "; 
 
     boolean clientConnected = false;
     Client myClient;
@@ -34,13 +38,9 @@ class W_Emotion extends Widget {
         //This is the protocol for setting up dropdowns.
         //Note that these 3 dropdowns correspond to the 3 global functions below
         //You just need to make sure the "id" (the 1st String) has the same name as the corresponding function
-        addDropdown("DropdownSelectStuff", "Drop 1", Arrays.asList("A", "B"), 0);
+        // addDropdown("DropdownSelectStuff", "Drop 1", Arrays.asList("A", "B"), 0);
         // addDropdown("Dropdown2", "Drop 2", Arrays.asList("C", "D", "E"), 1);
         // addDropdown("Dropdown3", "Drop 3", Arrays.asList("F", "G", "H", "I"), 3);
-
-        widgetTemplateButton = new Button (x + w/2, y + h/2, 200, navHeight, "Design Your Own Widget!", 12);
-        widgetTemplateButton.setFont(p4, 14);
-        widgetTemplateButton.setURL("https://openbci.github.io/Documentation/docs/06Software/01-OpenBCISoftware/GUIWidgets#custom-widget");
 
         /* Connect to the local machine at port 5204
         *  (or whichever port you choose to run the
@@ -70,12 +70,12 @@ class W_Emotion extends Widget {
 
         //put your code here...
         //If using a TopNav object, ignore interaction with widget object (ex. widgetTemplateButton)
-        if (topNav.configSelector.isVisible || topNav.layoutSelector.isVisible) {
-            widgetTemplateButton.setIsActive(false);
-            widgetTemplateButton.setIgnoreHover(true);
-        } else {
-            widgetTemplateButton.setIgnoreHover(false);
-        }
+        // if (topNav.configSelector.isVisible || topNav.layoutSelector.isVisible) {
+        //     widgetTemplateButton.setIsActive(false);
+        //     widgetTemplateButton.setIgnoreHover(true);
+        // } else {
+        //     widgetTemplateButton.setIgnoreHover(false);
+        // }
 
         
 
@@ -86,10 +86,22 @@ class W_Emotion extends Widget {
             myClient.write(new org.json.JSONArray(yLittleBuff_uV).toString());
         }
 
-        if (myClient.available() > 0) { 
+        if (myClient.available() > 0) {
             JSONObject json = parseJSONObject(myClient.readString());
             println(json.getInt("message")); 
             prediction = json.getInt("message");
+            if (prediction == 0) {
+                predictedLabel = "NEUTRAL";
+                predictedLabelColor = #C2C5CC;
+            } else if (prediction == 1) {
+                predictedLabel = "NEGATIVE";
+                predictedLabelColor = #FF0000;
+
+            } else if (prediction == 2) {
+                predictedLabel = "POSITIVE";
+                predictedLabelColor = #008000;
+            }
+
         }
     }
 
@@ -121,7 +133,6 @@ class W_Emotion extends Widget {
 
         //----------------- draw Circle -----------------
 
-        fill(#000000);
         // noStroke();
         // ellipse(w/4, h/2, w/4, w/4);
 
@@ -134,9 +145,12 @@ class W_Emotion extends Widget {
         // text("fft value: " + nf(fftBuff[0].getBand(10), 1, 3), w/4, h/2 + w/8 + 48);
 
         // text("Prediction: " + prediction, w/4, h/2 + w/8 + 48);
-        text("Prediction: " + prediction, w/2, h/2);
-
-
+        fill(#000000);
+        
+        text(startText, w/2-30, h/2);
+        fill(predictedLabelColor);
+        text(predictedLabel, w/2-30 + textWidth(startText), h/2 );
+        
         translate(-x, -y);
         textAlign(LEFT, BASELINE);
         popStyle();
@@ -147,7 +161,7 @@ class W_Emotion extends Widget {
         super.screenResized(); //calls the parent screenResized() method of Widget (DON'T REMOVE)
 
         //put your code here...
-        widgetTemplateButton.setPos(x + w/2 - widgetTemplateButton.but_dx/2, y + h/2 - widgetTemplateButton.but_dy/2);
+        // widgetTemplateButton.setPos(x + w/2 - widgetTemplateButton.but_dx/2, y + h/2 - widgetTemplateButton.but_dy/2);
 
 
     }
@@ -157,21 +171,21 @@ class W_Emotion extends Widget {
 
         //put your code here...
         //If using a TopNav object, ignore interaction with widget object (ex. widgetTemplateButton)
-        if (!topNav.configSelector.isVisible && !topNav.layoutSelector.isVisible) {
-            if(widgetTemplateButton.isMouseHere()){
-                widgetTemplateButton.setIsActive(true);
-            }
-        }
+        // if (!topNav.configSelector.isVisible && !topNav.layoutSelector.isVisible) {
+        //     if(widgetTemplateButton.isMouseHere()){
+        //         widgetTemplateButton.setIsActive(true);
+        //     }
+        // }
     }
 
     void mouseReleased(){
         super.mouseReleased(); //calls the parent mouseReleased() method of Widget (DON'T REMOVE)
 
         //put your code here...
-        if(widgetTemplateButton.isActive && widgetTemplateButton.isMouseHere()){
-            widgetTemplateButton.goToURL();
-        }
-        widgetTemplateButton.setIsActive(false);
+        // if(widgetTemplateButton.isActive && widgetTemplateButton.isMouseHere()){
+        //     widgetTemplateButton.goToURL();
+        // }
+        // widgetTemplateButton.setIsActive(false);
 
     }
 
@@ -184,16 +198,16 @@ class W_Emotion extends Widget {
 };
 
 //These functions need to be global! These functions are activated when an item from the corresponding dropdown is selected
-void DropdownSelectStuff(int n){
-    println("Item " + (n+1) + " selected from Dropdown 1");
-    if(n==0){
-        //do this
-    } else if(n==1){
-        //do this instead
-    }
+// void DropdownSelectStuff(int n){
+//     println("Item " + (n+1) + " selected from Dropdown 1");
+//     if(n==0){
+//         //do this
+//     } else if(n==1){
+//         //do this instead
+//     }
 
-    closeAllDropdowns(); // do this at the end of all widget-activated functions to ensure proper widget interactivity ... we want to make sure a click makes the menu close
-}
+//     closeAllDropdowns(); // do this at the end of all widget-activated functions to ensure proper widget interactivity ... we want to make sure a click makes the menu close
+// }
 
 // void Dropdown2(int n){
 //     println("Item " + (n+1) + " selected from Dropdown 2");
